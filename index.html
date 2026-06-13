@@ -195,7 +195,7 @@
     justify-content: center;
   }
   body.editing .del-btn { display: flex; }
-  body.editing .leaf, body.editing .funnel-step { padding-right: 8px; }
+  body.editing .leaf, body.editing .funnel-step, body.editing .note-item { padding-right: 8px; }
 
   .add-leaf-btn, .add-node-btn {
     display: none;
@@ -234,6 +234,27 @@
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   .funnel-arrow { text-align: center; color: #B4B2A9; font-size: 12px; line-height: 1; }
+
+  /* 记录区 */
+  .notes-section { margin-top: 10px; border-top: 1px dashed #E5E3DA; padding-top: 8px; }
+  .notes-title { font-size: 12px; color: #888780; margin-bottom: 6px; }
+  .note-item {
+    display: flex; align-items: center; gap: 8px;
+    background: #F1EFE8; border-radius: 8px;
+    padding: 8px 12px; margin-bottom: 6px; font-size: 13px;
+  }
+  .note-text { flex: 1; outline: none; min-width: 0; }
+  body.editing .note-text { border-radius: 4px; padding: 1px 4px; cursor: text; }
+  body.editing .note-text:focus { background: #fff; box-shadow: 0 0 0 2px #534AB7; }
+  .note-date { font-size: 11px; color: #B4B2A9; white-space: nowrap; flex-shrink: 0; }
+  .add-note-btn {
+    display: none;
+    font-size: 12px; padding: 8px 14px; border-radius: 8px;
+    border: 1px dashed #B4B2A9; background: transparent; color: #888780;
+    cursor: pointer; width: 100%;
+  }
+  body.editing .add-note-btn { display: block; }
+  .add-note-btn:hover { background: #F1EFE8; color: #444441; }
 
   /* Color assignments */
   .c-purple { --bg-color: var(--purple-bg); --text-color: var(--purple-text); --accent-color: var(--purple); }
@@ -636,6 +657,32 @@ function renderGroupNode(group, top) {
   };
   inner.appendChild(addLeafBtn);
 
+  // 记录区
+  if ((group.notes && group.notes.length) || editing) {
+    var notesSection = document.createElement('div');
+    notesSection.className = 'notes-section';
+    var notesTitle = document.createElement('div');
+    notesTitle.className = 'notes-title';
+    notesTitle.textContent = '\u8bb0\u5f55';
+    notesSection.appendChild(notesTitle);
+    (group.notes || []).forEach(function(note) {
+      notesSection.appendChild(renderNote(note, group));
+    });
+    var addNoteBtn = document.createElement('button');
+    addNoteBtn.className = 'add-note-btn';
+    addNoteBtn.textContent = '+ \u6dfb\u52a0\u8bb0\u5f55';
+    addNoteBtn.onclick = function(e) {
+      e.stopPropagation();
+      if (!group.notes) group.notes = [];
+      var today = new Date();
+      var dateStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+      group.notes.push({ id: uid(), text: '\u65b0\u8bb0\u5f55', date: dateStr });
+      saveData(); render();
+    };
+    notesSection.appendChild(addNoteBtn);
+    inner.appendChild(notesSection);
+  }
+
   body.appendChild(inner);
   el.appendChild(body);
   return el;
@@ -679,6 +726,36 @@ function renderFunnelStep(leaf, group) {
   del.onclick = function(e) {
     e.stopPropagation();
     group.leaves = group.leaves.filter(function(l){ return l.id !== leaf.id; });
+    saveData(); render();
+  };
+  el.appendChild(del);
+  return el;
+}
+
+function renderNote(note, group) {
+  var el = document.createElement('div');
+  el.className = 'note-item';
+
+  var span = document.createElement('span');
+  span.className = 'note-text';
+  span.textContent = note.text;
+  span.contentEditable = editing;
+  span.onblur = function() { note.text = span.textContent.trim(); saveData(); };
+  el.appendChild(span);
+
+  var dateSpan = document.createElement('span');
+  dateSpan.className = 'note-date';
+  dateSpan.textContent = note.date || '';
+  dateSpan.contentEditable = editing;
+  dateSpan.onblur = function() { note.date = dateSpan.textContent.trim(); saveData(); };
+  el.appendChild(dateSpan);
+
+  var del = document.createElement('button');
+  del.className = 'del-btn';
+  del.textContent = '\u00d7';
+  del.onclick = function(e) {
+    e.stopPropagation();
+    group.notes = group.notes.filter(function(n){ return n.id !== note.id; });
     saveData(); render();
   };
   el.appendChild(del);

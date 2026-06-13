@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本研究生申请规划平台 - 思维导图</title>
+<style>
+  :root {
+    --purple: #534AB7; --purple-bg: #EEEDFE; --purple-text: #26215C;
+    --teal: #0F6E56; --teal-bg: #E1F5EE; --teal-text: #04342C;
+    --coral: #993C1D; --coral-bg: #FAECE7; --coral-text: #4A1B0C;
+    --pink: #993556; --pink-bg: #FBEAF0; --pink-text: #4B1528;
+    --amber: #854F0B; --amber-bg: #FAEEDA; --amber-text: #412402;
+    --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #173404;
+    --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #042C53;
+    --gray: #5F5E5A; --gray-bg: #F1EFE8; --gray-text: #2C2C2A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #faf9f6;
+    color: #2C2C2A;
+    margin: 0;
+    padding: 24px 16px 80px;
+    line-height: 1.6;
+  }
+
+  .container { max-width: 760px; margin: 0 auto; }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 8px;
+    color: #26215C;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #888780;
+    margin: 0 0 24px;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .toolbar button {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #D3D1C7;
+    background: #fff;
+    color: #444441;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .toolbar button:hover {
+    background: #F1EFE8;
+    border-color: #B4B2A9;
+  }
+
+  /* Node structure */
+  .node {
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border: 1px solid transparent;
+  }
+
+  .node-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .node-header:hover { filter: brightness(0.97); }
+
+  .node-title { display: flex; align-items: center; gap: 10px; }
+
+  .node-sub {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.75;
+    margin-left: 4px;
+  }
+
+  .chevron {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+    opacity: 0.6;
+  }
+
+  .node.collapsed > .node-header .chevron { transform: rotate(-90deg); }
+
+  .node-body {
+    padding: 4px 14px 14px;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.25s ease;
+  }
+
+  .node.collapsed > .node-body {
+    grid-template-rows: 0fr;
+  }
+
+  .node-body-inner { overflow: hidden; min-height: 0; }
+  .node.collapsed > .node-body > .node-body-inner { padding-top: 0; }
+
+  /* Level 1 - main pillars */
+  .lvl-1 > .node-header { background: var(--bg-color); color: var(--text-color); font-size: 16px; }
+  .lvl-1 { border-color: var(--accent-color); }
+
+  /* Level 2 - sub groups */
+  .lvl-2 {
+    margin: 10px 0 10px 0;
+    background: #fff;
+    border: 1px solid #E5E3DA;
+  }
+  .lvl-2 > .node-header { font-size: 14px; padding: 10px 14px; }
+
+  /* Level 3 - leaf items */
+  .leaf {
+    background: #fff;
+    border: 1px solid #E5E3DA;
+    border-radius: 8px;
+    padding: 9px 14px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #444441;
+  }
+  .leaf:last-child { margin-bottom: 0; }
+
+  .leaf-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  @media (max-width: 480px) {
+    .leaf-grid { grid-template-columns: 1fr; }
+  }
+
+  .funnel {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: #444441;
+  }
+  .funnel-step {
+    background: #fff;
+    border: 1px solid #E5E3DA;
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-align: center;
+  }
+  .funnel-arrow {
+    text-align: center;
+    color: #B4B2A9;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  /* Color assignments per top-level pillar */
+  .c-purple { --bg-color: var(--purple-bg); --text-color: var(--purple-text); --accent-color: var(--purple); }
+  .c-teal   { --bg-color: var(--teal-bg);   --text-color: var(--teal-text);   --accent-color: var(--teal); }
+  .c-pink   { --bg-color: var(--pink-bg);   --text-color: var(--pink-text);   --accent-color: var(--pink); }
+  .c-amber  { --bg-color: var(--amber-bg);  --text-color: var(--amber-text);  --accent-color: var(--amber); }
+  .c-green  { --bg-color: var(--green-bg);  --text-color: var(--green-text);  --accent-color: var(--green); }
+
+  /* small color tags for content-ratio bars inside content section */
+  .bar-row { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+  .bar {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .bar-coral { background: var(--coral); }
+  .bar-pink  { background: var(--pink); }
+  .bar-amber { background: var(--amber); }
+  .bar-teal  { background: var(--teal); }
+  .bar-green { background: var(--green); }
+
+  .product-tier {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tier-box {
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .tier-gray  { background: var(--gray-bg);  color: var(--gray-text); }
+  .tier-teal  { background: var(--teal-bg);  color: var(--teal-text); }
+  .tier-purple{ background: var(--purple-bg);color: var(--purple-text); }
+  .tier-coral { background: var(--coral-bg); color: var(--coral-text); }
+  .tier-title { font-weight: 600; margin-bottom: 2px; }
+  .tier-desc { opacity: 0.8; font-size: 12px; }
+
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: #B4B2A9;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>日本研究生申请规划平台</h1>
+  <p class="subtitle">仰星留学 · 思维导图（点击标题展开/收起）</p>
+
+  <div class="toolbar">
+    <button onclick="setAll(false)">展开全部</button>
+    <button onclick="setAll(true)">收起全部</button>
+  </div>
+
+  <!-- ① IP定位系统 -->
+  <div class="node lvl-1 c-purple">
+    <div class="node-header" onclick="toggle(this)">
+      <div class="node-title">① IP定位系统 <span class="node-sub">身份 / 用户 / 价值 / 差异化</span></div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="node-body"><div class="node-body-inner">
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">身份定位</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf">日本研究生申请规划师</div>
+          <div class="leaf">日本升学规划顾问</div>
+          <div class="leaf">日本研究生成长教练</div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">用户定位</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">大一学生</div>
+            <div class="leaf">大二学生</div>
+            <div class="leaf">大三学生</div>
+            <div class="leaf">双非本科</div>
+            <div class="leaf">转专业需求学生</div>
+            <div class="leaf">家长群体</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">核心价值</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">提前规划</div>
+            <div class="leaf">长期培养</div>
+            <div class="leaf">研究方向定位</div>
+            <div class="leaf">研究计划书训练</div>
+            <div class="leaf">透明申请</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">差异化</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf">不做一次性申请</div>
+          <div class="leaf">不做纯文书代写</div>
+          <div class="leaf">不做纯套磁服务</div>
+          <div class="leaf">做成长培养</div>
+          <div class="leaf">做全过程规划</div>
+        </div></div>
+      </div>
+
+    </div></div>
+  </div>
+
+  <!-- ② 内容运营系统 -->
+  <div class="node lvl-1 c-teal">
+    <div class="node-header" onclick="toggle(this)">
+      <div class="node-title">② 内容运营系统 <span class="node-sub">五类内容配比</span></div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="node-body"><div class="node-body-inner">
+
+      <div class="bar-row">
+        <div class="bar bar-coral">流量内容 70%</div>
+        <div class="bar bar-pink">专业内容 15%</div>
+        <div class="bar bar-amber">培养内容 10%</div>
+        <div class="bar bar-teal">工具内容 3%</div>
+        <div class="bar bar-green">转化内容 2%</div>
+      </div>
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">流量内容 <span class="node-sub">70%</span></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">大一开始准备有多香</div>
+            <div class="leaf">二本能申请哪些学校</div>
+            <div class="leaf">日本研究生最大误区</div>
+            <div class="leaf">N2真的够吗</div>
+            <div class="leaf">研究计划书是什么</div>
+            <div class="leaf">为什么很多人申请失败</div>
+            <div class="leaf">日本留学避坑</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">专业内容 <span class="node-sub">15%</span></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">专业匹配分析</div>
+            <div class="leaf">研究方向分析</div>
+            <div class="leaf">学校分析</div>
+            <div class="leaf">教授分析</div>
+            <div class="leaf">学费分析</div>
+            <div class="leaf">出愿要求分析</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">培养内容 <span class="node-sub">10%</span></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">学生成长记录</div>
+            <div class="leaf">课题训练记录</div>
+            <div class="leaf">文献阅读训练</div>
+            <div class="leaf">研究计划书训练</div>
+            <div class="leaf">周报展示</div>
+            <div class="leaf">学员变化记录</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">工具内容 <span class="node-sub">3%</span></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">学校库展示</div>
+            <div class="leaf">专业匹配工具</div>
+            <div class="leaf">学费查询工具</div>
+            <div class="leaf">教授查询工具</div>
+            <div class="leaf">规划系统展示</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">转化内容 <span class="node-sub">2%</span></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">成功案例</div>
+            <div class="leaf">Offer案例</div>
+            <div class="leaf">学员反馈</div>
+            <div class="leaf">规划过程展示</div>
+            <div class="leaf">诊断案例</div>
+          </div>
+        </div></div>
+      </div>
+
+    </div></div>
+  </div>
+
+  <!-- ③ 产品体系 -->
+  <div class="node lvl-1 c-pink">
+    <div class="node-header" onclick="toggle(this)">
+      <div class="node-title">③ 产品体系 <span class="node-sub">四级产品矩阵</span></div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="node-body"><div class="node-body-inner">
+
+      <div class="product-tier">
+        <div class="tier-box tier-gray">
+          <div class="tier-title">免费层</div>
+          <div class="tier-desc">小红书内容 · 基础资料 · 学校基础查询 · 直播答疑</div>
+        </div>
+        <div class="tier-box tier-teal">
+          <div class="tier-title">引流产品</div>
+          <div class="tier-desc">专业匹配报告 · 研究方向测评 · 升学诊断 · 学校定位分析</div>
+        </div>
+        <div class="tier-box tier-purple">
+          <div class="tier-title">核心产品</div>
+          <div class="tier-desc">日本研究生申请规划 · 日语学习规划 · 研究方向规划 · 课题训练体系 · 研究计划书培养 · 教授匹配 · 套磁参与 · 出愿申请</div>
+        </div>
+        <div class="tier-box tier-coral">
+          <div class="tier-title">高端产品</div>
+          <div class="tier-desc">VIP长期培养 · 一对一导师 · 科研训练 · 高端院校规划</div>
+        </div>
+      </div>
+
+    </div></div>
+  </div>
+
+  <!-- ④ 小程序生态系统 -->
+  <div class="node lvl-1 c-amber">
+    <div class="node-header" onclick="toggle(this)">
+      <div class="node-title">④ 小程序生态系统 <span class="node-sub">五大子系统</span></div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="node-body"><div class="node-body-inner">
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">用户中心</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">学生档案</div>
+            <div class="leaf">成长记录</div>
+            <div class="leaf">学习进度</div>
+            <div class="leaf">任务管理</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">查询系统</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">学校库</div>
+            <div class="leaf">研究科库</div>
+            <div class="leaf">专业库</div>
+            <div class="leaf">教授库</div>
+            <div class="leaf">学费库</div>
+            <div class="leaf">奖学金库</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">匹配系统</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">专业匹配</div>
+            <div class="leaf">学校匹配</div>
+            <div class="leaf">预算匹配</div>
+            <div class="leaf">地区匹配</div>
+            <div class="leaf">教授匹配</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">培养系统</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">日语规划</div>
+            <div class="leaf">周任务</div>
+            <div class="leaf">文献阅读</div>
+            <div class="leaf">课题训练</div>
+            <div class="leaf">研究计划书训练</div>
+            <div class="leaf">导师点评</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">商业化</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">会员订阅</div>
+            <div class="leaf">课程销售</div>
+            <div class="leaf">广告位</div>
+            <div class="leaf">机构合作</div>
+            <div class="leaf">数据服务</div>
+          </div>
+        </div></div>
+      </div>
+
+    </div></div>
+  </div>
+
+  <!-- ⑤ 团队与增长系统 -->
+  <div class="node lvl-1 c-green">
+    <div class="node-header" onclick="toggle(this)">
+      <div class="node-title">⑤ 团队与增长系统 <span class="node-sub">含用户增长漏斗</span></div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="node-body"><div class="node-body-inner">
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">创始人IP</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf">内容输出</div>
+          <div class="leaf">直播答疑</div>
+          <div class="leaf">品牌建设</div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">内容团队</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">选题</div>
+            <div class="leaf">文案</div>
+            <div class="leaf">设计</div>
+            <div class="leaf">发布运营</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">规划团队</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">规划顾问</div>
+            <div class="leaf">日语老师</div>
+            <div class="leaf">课题导师</div>
+            <div class="leaf">申请老师</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2 collapsed">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">技术团队</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="leaf-grid">
+            <div class="leaf">小程序开发</div>
+            <div class="leaf">数据维护</div>
+            <div class="leaf">AI匹配系统</div>
+            <div class="leaf">CRM系统</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="node lvl-2">
+        <div class="node-header" onclick="toggle(this)">
+          <div class="node-title">用户增长漏斗</div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="node-body"><div class="node-body-inner">
+          <div class="funnel">
+            <div class="funnel-step">小红书曝光</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">私信咨询</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">领取诊断</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">使用小程序</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">专业评估</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">签约规划</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">长期培养</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">申请成功</div>
+            <div class="funnel-arrow">↓</div>
+            <div class="funnel-step">转介绍裂变</div>
+          </div>
+        </div></div>
+      </div>
+
+    </div></div>
+  </div>
+
+  <footer>仰星留学 · 日本研究生申请规划平台 · 双击/点击标题展开或收起分支</footer>
+</div>
+
+<script>
+  function toggle(headerEl) {
+    var node = headerEl.parentElement;
+    node.classList.toggle('collapsed');
+  }
+  function setAll(collapsed) {
+    document.querySelectorAll('.node').forEach(function(n) {
+      if (collapsed) { n.classList.add('collapsed'); }
+      else { n.classList.remove('collapsed'); }
+    });
+  }
+</script>
+</body>
+</html>

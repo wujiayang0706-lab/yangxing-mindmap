@@ -41,14 +41,14 @@
     text-align: center;
     font-size: 13px;
     color: #888780;
-    margin: 0 0 24px;
+    margin: 0 0 16px;
   }
 
   .toolbar {
     display: flex;
     gap: 8px;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
   }
 
@@ -63,11 +63,21 @@
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
   }
+  .toolbar button:hover { background: #F1EFE8; border-color: #B4B2A9; }
+  .toolbar button.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .toolbar button.danger { color: #993C1D; border-color: #F0997B; }
 
-  .toolbar button:hover {
-    background: #F1EFE8;
-    border-color: #B4B2A9;
+  .edit-hint {
+    text-align: center;
+    font-size: 12px;
+    color: #993C1D;
+    background: #FAECE7;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    display: none;
   }
+  body.editing .edit-hint { display: block; }
 
   /* Node structure */
   .node {
@@ -86,11 +96,23 @@
     user-select: none;
     font-weight: 600;
     font-size: 15px;
+    gap: 8px;
   }
 
   .node-header:hover { filter: brightness(0.97); }
 
-  .node-title { display: flex; align-items: center; gap: 10px; }
+  .node-title { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .node-title-text { outline: none; }
+  body.editing .node-title-text {
+    background: rgba(255,255,255,0.6);
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: text;
+  }
+  body.editing .node-title-text:focus {
+    background: #fff;
+    box-shadow: 0 0 0 2px var(--accent-color, #534AB7);
+  }
 
   .node-sub {
     font-size: 12px;
@@ -106,7 +128,6 @@
     transition: transform 0.25s ease;
     opacity: 0.6;
   }
-
   .node.collapsed > .node-header .chevron { transform: rotate(-90deg); }
 
   .node-body {
@@ -115,11 +136,7 @@
     grid-template-rows: 1fr;
     transition: grid-template-rows 0.25s ease;
   }
-
-  .node.collapsed > .node-body {
-    grid-template-rows: 0fr;
-  }
-
+  .node.collapsed > .node-body { grid-template-rows: 0fr; }
   .node-body-inner { overflow: hidden; min-height: 0; }
   .node.collapsed > .node-body > .node-body-inner { padding-top: 0; }
 
@@ -128,71 +145,107 @@
   .lvl-1 { border-color: var(--accent-color); }
 
   /* Level 2 - sub groups */
-  .lvl-2 {
-    margin: 10px 0 10px 0;
-    background: #fff;
-    border: 1px solid #E5E3DA;
-  }
+  .lvl-2 { margin: 10px 0; background: #fff; border: 1px solid #E5E3DA; }
   .lvl-2 > .node-header { font-size: 14px; padding: 10px 14px; }
 
-  /* Level 3 - leaf items */
-  .leaf {
-    background: #fff;
-    border: 1px solid #E5E3DA;
-    border-radius: 8px;
-    padding: 9px 14px;
-    margin-bottom: 6px;
-    font-size: 13px;
-    color: #444441;
-  }
-  .leaf:last-child { margin-bottom: 0; }
-
+  /* Leaves */
   .leaf-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
-  @media (max-width: 480px) {
-    .leaf-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 480px) { .leaf-grid { grid-template-columns: 1fr; } }
 
-  .funnel {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 13px;
-    color: #444441;
-  }
-  .funnel-step {
+  .leaf {
     background: #fff;
     border: 1px solid #E5E3DA;
     border-radius: 8px;
-    padding: 8px 14px;
-    text-align: center;
+    padding: 9px 14px;
+    font-size: 13px;
+    color: #444441;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
   }
-  .funnel-arrow {
-    text-align: center;
-    color: #B4B2A9;
-    font-size: 12px;
-    line-height: 1;
+  .leaf-text { outline: none; flex: 1; min-width: 0; }
+  body.editing .leaf-text {
+    border-radius: 4px;
+    padding: 1px 4px;
+    cursor: text;
+  }
+  body.editing .leaf-text:focus {
+    background: #fff;
+    box-shadow: 0 0 0 2px #534AB7;
   }
 
-  /* Color assignments per top-level pillar */
+  .del-btn {
+    display: none;
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: #F0997B;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+  body.editing .del-btn { display: flex; }
+  body.editing .leaf, body.editing .funnel-step { padding-right: 8px; }
+
+  .add-leaf-btn, .add-node-btn {
+    display: none;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px dashed #B4B2A9;
+    background: transparent;
+    color: #888780;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 6px;
+  }
+  body.editing .add-leaf-btn, body.editing .add-node-btn { display: block; }
+  .add-leaf-btn:hover, .add-node-btn:hover { background: #F1EFE8; color: #444441; }
+
+  .node-header-actions { display: none; align-items: center; gap: 4px; flex-shrink: 0; }
+  body.editing .node-header-actions { display: flex; }
+  .node-del-btn {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.12);
+    color: inherit;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .node-del-btn:hover { background: rgba(0,0,0,0.22); }
+
+  .funnel { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #444441; }
+  .funnel-step {
+    background: #fff; border: 1px solid #E5E3DA; border-radius: 8px;
+    padding: 8px 14px; text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .funnel-arrow { text-align: center; color: #B4B2A9; font-size: 12px; line-height: 1; }
+
+  /* Color assignments */
   .c-purple { --bg-color: var(--purple-bg); --text-color: var(--purple-text); --accent-color: var(--purple); }
   .c-teal   { --bg-color: var(--teal-bg);   --text-color: var(--teal-text);   --accent-color: var(--teal); }
   .c-pink   { --bg-color: var(--pink-bg);   --text-color: var(--pink-text);   --accent-color: var(--pink); }
   .c-amber  { --bg-color: var(--amber-bg);  --text-color: var(--amber-text);  --accent-color: var(--amber); }
   .c-green  { --bg-color: var(--green-bg);  --text-color: var(--green-text);  --accent-color: var(--green); }
 
-  /* small color tags for content-ratio bars inside content section */
   .bar-row { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
   .bar {
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    color: #fff;
-    font-weight: 600;
-    white-space: nowrap;
+    font-size: 12px; padding: 6px 10px; border-radius: 6px;
+    color: #fff; font-weight: 600; white-space: nowrap;
   }
   .bar-coral { background: var(--coral); }
   .bar-pink  { background: var(--pink); }
@@ -200,447 +253,551 @@
   .bar-teal  { background: var(--teal); }
   .bar-green { background: var(--green); }
 
-  .product-tier {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .tier-box {
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-  .tier-gray  { background: var(--gray-bg);  color: var(--gray-text); }
-  .tier-teal  { background: var(--teal-bg);  color: var(--teal-text); }
-  .tier-purple{ background: var(--purple-bg);color: var(--purple-text); }
-  .tier-coral { background: var(--coral-bg); color: var(--coral-text); }
-  .tier-title { font-weight: 600; margin-bottom: 2px; }
-  .tier-desc { opacity: 0.8; font-size: 12px; }
+  footer { text-align: center; font-size: 11px; color: #B4B2A9; margin-top: 30px; }
 
-  footer {
-    text-align: center;
-    font-size: 11px;
-    color: #B4B2A9;
-    margin-top: 30px;
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: none; align-items: center; justify-content: center;
+    z-index: 10000; padding: 20px;
   }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: #fff; border-radius: 12px; padding: 20px;
+    max-width: 90vw; max-height: 80vh; overflow: auto;
+    width: 100%; max-width: 480px;
+  }
+  .modal-box h3 { margin: 0 0 10px; font-size: 15px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+  .modal-actions button {
+    font-size: 13px; padding: 8px 16px; border-radius: 8px;
+    border: 1px solid #D3D1C7; background: #fff; cursor: pointer;
+  }
+  .modal-actions button.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .modal-box p { font-size: 13px; color: #5F5E5A; }
 </style>
 </head>
 <body>
-<div class="container">
+
+<div id="lock-screen" style="position:fixed;inset:0;background:#faf9f6;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;padding:20px;text-align:center;">
+  <div style="font-size:18px;font-weight:600;color:#26215C;margin-bottom:16px;">日本研究生申请规划平台</div>
+  <div style="font-size:13px;color:#888780;margin-bottom:20px;">请输入访问密码</div>
+  <input id="pw-input" type="password" placeholder="密码" style="font-size:15px;padding:10px 16px;border:1px solid #D3D1C7;border-radius:8px;width:200px;text-align:center;margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkPw()">
+  <button onclick="checkPw()" style="font-size:14px;padding:10px 24px;border-radius:20px;border:none;background:#534AB7;color:#fff;cursor:pointer;">进入</button>
+  <div id="pw-error" style="color:#993C1D;font-size:12px;margin-top:10px;display:none;">密码错误，请重试</div>
+</div>
+
+<div class="container" style="display:none;" id="main-content">
 
   <h1>日本研究生申请规划平台</h1>
-  <p class="subtitle">仰星留学 · 思维导图（点击标题展开/收起）</p>
+  <p class="subtitle">仰星留学 · 思维导图</p>
 
   <div class="toolbar">
     <button onclick="setAll(false)">展开全部</button>
     <button onclick="setAll(true)">收起全部</button>
+    <button id="edit-toggle-btn" onclick="toggleEdit()">编辑模式</button>
   </div>
+  <div class="toolbar" id="edit-toolbar" style="display:none;">
+    <button class="primary" onclick="addTopNode()">+ 新增一级模块</button>
+    <button onclick="exportData()">导出（保存到电脑）</button>
+    <button class="danger" onclick="resetData()">恢复初始内容</button>
+  </div>
+  <div class="edit-hint">编辑模式已开启：点文字可改，点 × 删除，用"+"按钮新增。改动会自动保存在本机浏览器。完成后点"导出"下载新文件，上传覆盖GitHub上的index.html，其他设备才能看到更新。</div>
 
-  <!-- ① IP定位系统 -->
-  <div class="node lvl-1 c-purple">
-    <div class="node-header" onclick="toggle(this)">
-      <div class="node-title">① IP定位系统 <span class="node-sub">身份 / 用户 / 价值 / 差异化</span></div>
-      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  <div id="tree"></div>
+
+  <footer>仰星留学 · 日本研究生申请规划平台 · 点击标题展开或收起分支</footer>
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal-box">
+    <h3>导出文件</h3>
+    <p>点击下方按钮下载更新后的 index.html 文件，然后到 GitHub 仓库用这个文件覆盖原来的 index.html（上传时直接拖入同名文件即可覆盖）。</p>
+    <div class="modal-actions">
+      <button onclick="closeExportModal()">取消</button>
+      <button class="primary" onclick="downloadHtml()">下载 index.html</button>
     </div>
-    <div class="node-body"><div class="node-body-inner">
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">身份定位</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf">日本研究生申请规划师</div>
-          <div class="leaf">日本升学规划顾问</div>
-          <div class="leaf">日本研究生成长教练</div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">用户定位</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">大一学生</div>
-            <div class="leaf">大二学生</div>
-            <div class="leaf">大三学生</div>
-            <div class="leaf">双非本科</div>
-            <div class="leaf">转专业需求学生</div>
-            <div class="leaf">家长群体</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">核心价值</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">提前规划</div>
-            <div class="leaf">长期培养</div>
-            <div class="leaf">研究方向定位</div>
-            <div class="leaf">研究计划书训练</div>
-            <div class="leaf">透明申请</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">差异化</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf">不做一次性申请</div>
-          <div class="leaf">不做纯文书代写</div>
-          <div class="leaf">不做纯套磁服务</div>
-          <div class="leaf">做成长培养</div>
-          <div class="leaf">做全过程规划</div>
-        </div></div>
-      </div>
-
-    </div></div>
   </div>
+</div>
 
-  <!-- ② 内容运营系统 -->
-  <div class="node lvl-1 c-teal">
-    <div class="node-header" onclick="toggle(this)">
-      <div class="node-title">② 内容运营系统 <span class="node-sub">五类内容配比</span></div>
-      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div class="node-body"><div class="node-body-inner">
-
-      <div class="bar-row">
-        <div class="bar bar-coral">流量内容 70%</div>
-        <div class="bar bar-pink">专业内容 15%</div>
-        <div class="bar bar-amber">培养内容 10%</div>
-        <div class="bar bar-teal">工具内容 3%</div>
-        <div class="bar bar-green">转化内容 2%</div>
-      </div>
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">流量内容 <span class="node-sub">70%</span></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">大一开始准备有多香</div>
-            <div class="leaf">二本能申请哪些学校</div>
-            <div class="leaf">日本研究生最大误区</div>
-            <div class="leaf">N2真的够吗</div>
-            <div class="leaf">研究计划书是什么</div>
-            <div class="leaf">为什么很多人申请失败</div>
-            <div class="leaf">日本留学避坑</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">专业内容 <span class="node-sub">15%</span></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">专业匹配分析</div>
-            <div class="leaf">研究方向分析</div>
-            <div class="leaf">学校分析</div>
-            <div class="leaf">教授分析</div>
-            <div class="leaf">学费分析</div>
-            <div class="leaf">出愿要求分析</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">培养内容 <span class="node-sub">10%</span></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">学生成长记录</div>
-            <div class="leaf">课题训练记录</div>
-            <div class="leaf">文献阅读训练</div>
-            <div class="leaf">研究计划书训练</div>
-            <div class="leaf">周报展示</div>
-            <div class="leaf">学员变化记录</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">工具内容 <span class="node-sub">3%</span></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">学校库展示</div>
-            <div class="leaf">专业匹配工具</div>
-            <div class="leaf">学费查询工具</div>
-            <div class="leaf">教授查询工具</div>
-            <div class="leaf">规划系统展示</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">转化内容 <span class="node-sub">2%</span></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">成功案例</div>
-            <div class="leaf">Offer案例</div>
-            <div class="leaf">学员反馈</div>
-            <div class="leaf">规划过程展示</div>
-            <div class="leaf">诊断案例</div>
-          </div>
-        </div></div>
-      </div>
-
-    </div></div>
-  </div>
-
-  <!-- ③ 产品体系 -->
-  <div class="node lvl-1 c-pink">
-    <div class="node-header" onclick="toggle(this)">
-      <div class="node-title">③ 产品体系 <span class="node-sub">四级产品矩阵</span></div>
-      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div class="node-body"><div class="node-body-inner">
-
-      <div class="product-tier">
-        <div class="tier-box tier-gray">
-          <div class="tier-title">免费层</div>
-          <div class="tier-desc">小红书内容 · 基础资料 · 学校基础查询 · 直播答疑</div>
-        </div>
-        <div class="tier-box tier-teal">
-          <div class="tier-title">引流产品</div>
-          <div class="tier-desc">专业匹配报告 · 研究方向测评 · 升学诊断 · 学校定位分析</div>
-        </div>
-        <div class="tier-box tier-purple">
-          <div class="tier-title">核心产品</div>
-          <div class="tier-desc">日本研究生申请规划 · 日语学习规划 · 研究方向规划 · 课题训练体系 · 研究计划书培养 · 教授匹配 · 套磁参与 · 出愿申请</div>
-        </div>
-        <div class="tier-box tier-coral">
-          <div class="tier-title">高端产品</div>
-          <div class="tier-desc">VIP长期培养 · 一对一导师 · 科研训练 · 高端院校规划</div>
-        </div>
-      </div>
-
-    </div></div>
-  </div>
-
-  <!-- ④ 小程序生态系统 -->
-  <div class="node lvl-1 c-amber">
-    <div class="node-header" onclick="toggle(this)">
-      <div class="node-title">④ 小程序生态系统 <span class="node-sub">五大子系统</span></div>
-      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div class="node-body"><div class="node-body-inner">
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">用户中心</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">学生档案</div>
-            <div class="leaf">成长记录</div>
-            <div class="leaf">学习进度</div>
-            <div class="leaf">任务管理</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">查询系统</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">学校库</div>
-            <div class="leaf">研究科库</div>
-            <div class="leaf">专业库</div>
-            <div class="leaf">教授库</div>
-            <div class="leaf">学费库</div>
-            <div class="leaf">奖学金库</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">匹配系统</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">专业匹配</div>
-            <div class="leaf">学校匹配</div>
-            <div class="leaf">预算匹配</div>
-            <div class="leaf">地区匹配</div>
-            <div class="leaf">教授匹配</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">培养系统</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">日语规划</div>
-            <div class="leaf">周任务</div>
-            <div class="leaf">文献阅读</div>
-            <div class="leaf">课题训练</div>
-            <div class="leaf">研究计划书训练</div>
-            <div class="leaf">导师点评</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">商业化</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">会员订阅</div>
-            <div class="leaf">课程销售</div>
-            <div class="leaf">广告位</div>
-            <div class="leaf">机构合作</div>
-            <div class="leaf">数据服务</div>
-          </div>
-        </div></div>
-      </div>
-
-    </div></div>
-  </div>
-
-  <!-- ⑤ 团队与增长系统 -->
-  <div class="node lvl-1 c-green">
-    <div class="node-header" onclick="toggle(this)">
-      <div class="node-title">⑤ 团队与增长系统 <span class="node-sub">含用户增长漏斗</span></div>
-      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div class="node-body"><div class="node-body-inner">
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">创始人IP</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf">内容输出</div>
-          <div class="leaf">直播答疑</div>
-          <div class="leaf">品牌建设</div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">内容团队</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">选题</div>
-            <div class="leaf">文案</div>
-            <div class="leaf">设计</div>
-            <div class="leaf">发布运营</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">规划团队</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">规划顾问</div>
-            <div class="leaf">日语老师</div>
-            <div class="leaf">课题导师</div>
-            <div class="leaf">申请老师</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2 collapsed">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">技术团队</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="leaf-grid">
-            <div class="leaf">小程序开发</div>
-            <div class="leaf">数据维护</div>
-            <div class="leaf">AI匹配系统</div>
-            <div class="leaf">CRM系统</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="node lvl-2">
-        <div class="node-header" onclick="toggle(this)">
-          <div class="node-title">用户增长漏斗</div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="node-body"><div class="node-body-inner">
-          <div class="funnel">
-            <div class="funnel-step">小红书曝光</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">私信咨询</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">领取诊断</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">使用小程序</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">专业评估</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">签约规划</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">长期培养</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">申请成功</div>
-            <div class="funnel-arrow">↓</div>
-            <div class="funnel-step">转介绍裂变</div>
-          </div>
-        </div></div>
-      </div>
-
-    </div></div>
-  </div>
-
-  <footer>仰星留学 · 日本研究生申请规划平台 · 双击/点击标题展开或收起分支</footer>
 </div>
 
 <script>
-  function toggle(headerEl) {
-    var node = headerEl.parentElement;
-    node.classList.toggle('collapsed');
+// ============ 数据结构 ============
+var DEFAULT_DATA = [
+  {
+    id: "n1", color: "c-purple", title: "① IP定位系统", sub: "身份 / 用户 / 价值 / 差异化",
+    children: [
+      { id: "n1-1", title: "身份定位", leaves: [
+        {id:"l1",text:"日本研究生申请规划师"},
+        {id:"l2",text:"日本升学规划顾问"},
+        {id:"l3",text:"日本研究生成长教练"}
+      ]},
+      { id: "n1-2", title: "用户定位", leaves: [
+        {id:"l4",text:"大一学生"},{id:"l5",text:"大二学生"},{id:"l6",text:"大三学生"},
+        {id:"l7",text:"双非本科"},{id:"l8",text:"转专业需求学生"},{id:"l9",text:"家长群体"}
+      ]},
+      { id: "n1-3", title: "核心价值", collapsed: true, leaves: [
+        {id:"l10",text:"提前规划"},{id:"l11",text:"长期培养"},{id:"l12",text:"研究方向定位"},
+        {id:"l13",text:"研究计划书训练"},{id:"l14",text:"透明申请"}
+      ]},
+      { id: "n1-4", title: "差异化", collapsed: true, leaves: [
+        {id:"l15",text:"不做一次性申请"},{id:"l16",text:"不做纯文书代写"},{id:"l17",text:"不做纯套磁服务"},
+        {id:"l18",text:"做成长培养"},{id:"l19",text:"做全过程规划"}
+      ]}
+    ]
+  },
+  {
+    id: "n2", color: "c-teal", title: "② 内容运营系统", sub: "五类内容配比",
+    bars: [
+      {cls:"bar-coral", text:"流量内容 70%"},
+      {cls:"bar-pink", text:"专业内容 15%"},
+      {cls:"bar-amber", text:"培养内容 10%"},
+      {cls:"bar-teal", text:"工具内容 3%"},
+      {cls:"bar-green", text:"转化内容 2%"}
+    ],
+    children: [
+      { id: "n2-1", title: "流量内容", sub: "70%", leaves: [
+        {id:"l20",text:"大一开始准备有多香"},{id:"l21",text:"二本能申请哪些学校"},{id:"l22",text:"日本研究生最大误区"},
+        {id:"l23",text:"N2真的够吗"},{id:"l24",text:"研究计划书是什么"},{id:"l25",text:"为什么很多人申请失败"},
+        {id:"l26",text:"日本留学避坑"}
+      ]},
+      { id: "n2-2", title: "专业内容", sub: "15%", collapsed: true, leaves: [
+        {id:"l27",text:"专业匹配分析"},{id:"l28",text:"研究方向分析"},{id:"l29",text:"学校分析"},
+        {id:"l30",text:"教授分析"},{id:"l31",text:"学费分析"},{id:"l32",text:"出愿要求分析"}
+      ]},
+      { id: "n2-3", title: "培养内容", sub: "10%", collapsed: true, leaves: [
+        {id:"l33",text:"学生成长记录"},{id:"l34",text:"课题训练记录"},{id:"l35",text:"文献阅读训练"},
+        {id:"l36",text:"研究计划书训练"},{id:"l37",text:"周报展示"},{id:"l38",text:"学员变化记录"}
+      ]},
+      { id: "n2-4", title: "工具内容", sub: "3%", collapsed: true, leaves: [
+        {id:"l39",text:"学校库展示"},{id:"l40",text:"专业匹配工具"},{id:"l41",text:"学费查询工具"},
+        {id:"l42",text:"教授查询工具"},{id:"l43",text:"规划系统展示"}
+      ]},
+      { id: "n2-5", title: "转化内容", sub: "2%", collapsed: true, leaves: [
+        {id:"l44",text:"成功案例"},{id:"l45",text:"Offer案例"},{id:"l46",text:"学员反馈"},
+        {id:"l47",text:"规划过程展示"},{id:"l48",text:"诊断案例"}
+      ]}
+    ]
+  },
+  {
+    id: "n3", color: "c-pink", title: "③ 产品体系", sub: "四级产品矩阵",
+    children: [
+      { id: "n3-1", title: "免费层", leaves: [
+        {id:"l49",text:"小红书内容"},{id:"l50",text:"基础资料"},{id:"l51",text:"学校基础查询"},{id:"l52",text:"直播答疑"}
+      ]},
+      { id: "n3-2", title: "引流产品", leaves: [
+        {id:"l53",text:"专业匹配报告"},{id:"l54",text:"研究方向测评"},{id:"l55",text:"升学诊断"},{id:"l56",text:"学校定位分析"}
+      ]},
+      { id: "n3-3", title: "核心产品", leaves: [
+        {id:"l57",text:"日本研究生申请规划"},{id:"l58",text:"日语学习规划"},{id:"l59",text:"研究方向规划"},
+        {id:"l60",text:"课题训练体系"},{id:"l61",text:"研究计划书培养"},{id:"l62",text:"教授匹配"},
+        {id:"l63",text:"套磁参与"},{id:"l64",text:"出愿申请"}
+      ]},
+      { id: "n3-4", title: "高端产品", leaves: [
+        {id:"l65",text:"VIP长期培养"},{id:"l66",text:"一对一导师"},{id:"l67",text:"科研训练"},{id:"l68",text:"高端院校规划"}
+      ]}
+    ]
+  },
+  {
+    id: "n4", color: "c-amber", title: "④ 小程序生态系统", sub: "五大子系统",
+    children: [
+      { id: "n4-1", title: "用户中心", leaves: [
+        {id:"l69",text:"学生档案"},{id:"l70",text:"成长记录"},{id:"l71",text:"学习进度"},{id:"l72",text:"任务管理"}
+      ]},
+      { id: "n4-2", title: "查询系统", leaves: [
+        {id:"l73",text:"学校库"},{id:"l74",text:"研究科库"},{id:"l75",text:"专业库"},
+        {id:"l76",text:"教授库"},{id:"l77",text:"学费库"},{id:"l78",text:"奖学金库"}
+      ]},
+      { id: "n4-3", title: "匹配系统", leaves: [
+        {id:"l79",text:"专业匹配"},{id:"l80",text:"学校匹配"},{id:"l81",text:"预算匹配"},
+        {id:"l82",text:"地区匹配"},{id:"l83",text:"教授匹配"}
+      ]},
+      { id: "n4-4", title: "培养系统", leaves: [
+        {id:"l84",text:"日语规划"},{id:"l85",text:"周任务"},{id:"l86",text:"文献阅读"},
+        {id:"l87",text:"课题训练"},{id:"l88",text:"研究计划书训练"},{id:"l89",text:"导师点评"}
+      ]},
+      { id: "n4-5", title: "商业化", leaves: [
+        {id:"l90",text:"会员订阅"},{id:"l91",text:"课程销售"},{id:"l92",text:"广告位"},
+        {id:"l93",text:"机构合作"},{id:"l94",text:"数据服务"}
+      ]}
+    ]
+  },
+  {
+    id: "n5", color: "c-green", title: "⑤ 团队与增长系统", sub: "含用户增长漏斗",
+    children: [
+      { id: "n5-1", title: "创始人IP", leaves: [
+        {id:"l95",text:"内容输出"},{id:"l96",text:"直播答疑"},{id:"l97",text:"品牌建设"}
+      ]},
+      { id: "n5-2", title: "内容团队", collapsed: true, leaves: [
+        {id:"l98",text:"选题"},{id:"l99",text:"文案"},{id:"l100",text:"设计"},{id:"l101",text:"发布运营"}
+      ]},
+      { id: "n5-3", title: "规划团队", collapsed: true, leaves: [
+        {id:"l102",text:"规划顾问"},{id:"l103",text:"日语老师"},{id:"l104",text:"课题导师"},{id:"l105",text:"申请老师"}
+      ]},
+      { id: "n5-4", title: "技术团队", collapsed: true, leaves: [
+        {id:"l106",text:"小程序开发"},{id:"l107",text:"数据维护"},{id:"l108",text:"AI匹配系统"},{id:"l109",text:"CRM系统"}
+      ]},
+      { id: "n5-5", title: "用户增长漏斗", type: "funnel", leaves: [
+        {id:"l110",text:"小红书曝光"},{id:"l111",text:"私信咨询"},{id:"l112",text:"领取诊断"},
+        {id:"l113",text:"使用小程序"},{id:"l114",text:"专业评估"},{id:"l115",text:"签约规划"},
+        {id:"l116",text:"长期培养"},{id:"l117",text:"申请成功"},{id:"l118",text:"转介绍裂变"}
+      ]}
+    ]
   }
-  function setAll(collapsed) {
-    document.querySelectorAll('.node').forEach(function(n) {
-      if (collapsed) { n.classList.add('collapsed'); }
-      else { n.classList.remove('collapsed'); }
+];
+
+var STORAGE_KEY = 'yangxing-mindmap-data';
+var EDIT_KEY = 'yangxing-mindmap-editing';
+var data = loadData();
+var editing = false;
+var uidCounter = 1000;
+
+function uid() { uidCounter++; return 'id' + Date.now() + '_' + uidCounter; }
+
+function loadData() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// ============ 渲染 ============
+function render() {
+  var tree = document.getElementById('tree');
+  tree.innerHTML = '';
+  data.forEach(function(top) {
+    tree.appendChild(renderTopNode(top));
+  });
+}
+
+function renderTopNode(top) {
+  var el = document.createElement('div');
+  el.className = 'node lvl-1 ' + (top.color || 'c-purple') + (top.collapsed ? ' collapsed' : '');
+  el.dataset.id = top.id;
+
+  var header = document.createElement('div');
+  header.className = 'node-header';
+  header.onclick = function(e) { if (editing && e.target.closest('[contenteditable], .node-del-btn')) return; toggle(el); };
+
+  var titleWrap = document.createElement('div');
+  titleWrap.className = 'node-title';
+  var titleSpan = document.createElement('span');
+  titleSpan.className = 'node-title-text';
+  titleSpan.textContent = top.title;
+  titleSpan.contentEditable = editing;
+  titleSpan.onblur = function() { top.title = titleSpan.textContent.trim(); saveData(); };
+  titleWrap.appendChild(titleSpan);
+  if (top.sub) {
+    var subSpan = document.createElement('span');
+    subSpan.className = 'node-sub';
+    subSpan.textContent = top.sub;
+    titleWrap.appendChild(subSpan);
+  }
+  header.appendChild(titleWrap);
+
+  var actions = document.createElement('div');
+  actions.className = 'node-header-actions';
+  var delBtn = document.createElement('button');
+  delBtn.className = 'node-del-btn';
+  delBtn.textContent = '\u00d7';
+  delBtn.onclick = function(e) {
+    e.stopPropagation();
+    if (confirm('\u5220\u9664\u6574\u4e2a\u6a21\u5757\uff1f')) {
+      data = data.filter(function(d){ return d.id !== top.id; });
+      saveData(); render();
+    }
+  };
+  actions.appendChild(delBtn);
+  header.appendChild(actions);
+
+  header.appendChild(makeChevron());
+  el.appendChild(header);
+
+  var body = document.createElement('div');
+  body.className = 'node-body';
+  var inner = document.createElement('div');
+  inner.className = 'node-body-inner';
+
+  if (top.bars && top.bars.length) {
+    var barRow = document.createElement('div');
+    barRow.className = 'bar-row';
+    top.bars.forEach(function(b) {
+      var bar = document.createElement('div');
+      bar.className = 'bar ' + b.cls;
+      bar.textContent = b.text;
+      barRow.appendChild(bar);
     });
+    inner.appendChild(barRow);
   }
+
+  (top.children || []).forEach(function(child) {
+    inner.appendChild(renderGroupNode(child, top));
+  });
+
+  var addGroupBtn = document.createElement('button');
+  addGroupBtn.className = 'add-node-btn';
+  addGroupBtn.textContent = '+ \u65b0\u589e\u5b50\u5206\u7ec4';
+  addGroupBtn.onclick = function(e) {
+    e.stopPropagation();
+    if (!top.children) top.children = [];
+    top.children.push({ id: uid(), title: '\u65b0\u5206\u7ec4', leaves: [{id: uid(), text:'\u65b0\u6761\u76ee'}] });
+    saveData(); render();
+  };
+  inner.appendChild(addGroupBtn);
+
+  body.appendChild(inner);
+  el.appendChild(body);
+  return el;
+}
+
+function renderGroupNode(group, top) {
+  var el = document.createElement('div');
+  el.className = 'node lvl-2' + (group.collapsed ? ' collapsed' : '');
+  el.dataset.id = group.id;
+
+  var header = document.createElement('div');
+  header.className = 'node-header';
+  header.onclick = function(e) { if (editing && e.target.closest('[contenteditable], .node-del-btn')) return; toggle(el); };
+
+  var titleWrap = document.createElement('div');
+  titleWrap.className = 'node-title';
+  var titleSpan = document.createElement('span');
+  titleSpan.className = 'node-title-text';
+  titleSpan.textContent = group.title;
+  titleSpan.contentEditable = editing;
+  titleSpan.onblur = function() { group.title = titleSpan.textContent.trim(); saveData(); };
+  titleWrap.appendChild(titleSpan);
+  if (group.sub) {
+    var subSpan = document.createElement('span');
+    subSpan.className = 'node-sub';
+    subSpan.textContent = group.sub;
+    titleWrap.appendChild(subSpan);
+  }
+  header.appendChild(titleWrap);
+
+  var actions = document.createElement('div');
+  actions.className = 'node-header-actions';
+  var delBtn = document.createElement('button');
+  delBtn.className = 'node-del-btn';
+  delBtn.textContent = '\u00d7';
+  delBtn.onclick = function(e) {
+    e.stopPropagation();
+    if (confirm('\u5220\u9664\u8be5\u5206\u7ec4\uff1f')) {
+      top.children = top.children.filter(function(c){ return c.id !== group.id; });
+      saveData(); render();
+    }
+  };
+  actions.appendChild(delBtn);
+  header.appendChild(actions);
+
+  header.appendChild(makeChevron());
+  el.appendChild(header);
+
+  var body = document.createElement('div');
+  body.className = 'node-body';
+  var inner = document.createElement('div');
+  inner.className = 'node-body-inner';
+
+  if (group.type === 'funnel') {
+    var funnel = document.createElement('div');
+    funnel.className = 'funnel';
+    (group.leaves || []).forEach(function(leaf, idx) {
+      funnel.appendChild(renderFunnelStep(leaf, group));
+      if (idx < group.leaves.length - 1) {
+        var arrow = document.createElement('div');
+        arrow.className = 'funnel-arrow';
+        arrow.textContent = '\u2193';
+        funnel.appendChild(arrow);
+      }
+    });
+    inner.appendChild(funnel);
+  } else {
+    var grid = document.createElement('div');
+    grid.className = 'leaf-grid';
+    (group.leaves || []).forEach(function(leaf) {
+      grid.appendChild(renderLeaf(leaf, group));
+    });
+    inner.appendChild(grid);
+  }
+
+  var addLeafBtn = document.createElement('button');
+  addLeafBtn.className = 'add-leaf-btn';
+  addLeafBtn.textContent = '+ \u65b0\u589e\u6761\u76ee';
+  addLeafBtn.onclick = function(e) {
+    e.stopPropagation();
+    if (!group.leaves) group.leaves = [];
+    group.leaves.push({ id: uid(), text: '\u65b0\u6761\u76ee' });
+    saveData(); render();
+  };
+  inner.appendChild(addLeafBtn);
+
+  body.appendChild(inner);
+  el.appendChild(body);
+  return el;
+}
+
+function renderLeaf(leaf, group) {
+  var el = document.createElement('div');
+  el.className = 'leaf';
+  var span = document.createElement('span');
+  span.className = 'leaf-text';
+  span.textContent = leaf.text;
+  span.contentEditable = editing;
+  span.onblur = function() { leaf.text = span.textContent.trim(); saveData(); };
+  el.appendChild(span);
+
+  var del = document.createElement('button');
+  del.className = 'del-btn';
+  del.textContent = '\u00d7';
+  del.onclick = function(e) {
+    e.stopPropagation();
+    group.leaves = group.leaves.filter(function(l){ return l.id !== leaf.id; });
+    saveData(); render();
+  };
+  el.appendChild(del);
+  return el;
+}
+
+function renderFunnelStep(leaf, group) {
+  var el = document.createElement('div');
+  el.className = 'funnel-step';
+  var span = document.createElement('span');
+  span.className = 'leaf-text';
+  span.textContent = leaf.text;
+  span.contentEditable = editing;
+  span.onblur = function() { leaf.text = span.textContent.trim(); saveData(); };
+  el.appendChild(span);
+
+  var del = document.createElement('button');
+  del.className = 'del-btn';
+  del.textContent = '\u00d7';
+  del.onclick = function(e) {
+    e.stopPropagation();
+    group.leaves = group.leaves.filter(function(l){ return l.id !== leaf.id; });
+    saveData(); render();
+  };
+  el.appendChild(del);
+  return el;
+}
+
+function makeChevron() {
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('class', 'chevron');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  var poly = document.createElementNS(ns, 'polyline');
+  poly.setAttribute('points', '6 9 12 15 18 9');
+  svg.appendChild(poly);
+  return svg;
+}
+
+// ============ 折叠/展开 ============
+function toggle(node) {
+  node.classList.toggle('collapsed');
+  var id = node.dataset.id;
+  var isCollapsed = node.classList.contains('collapsed');
+  data.forEach(function(top) {
+    if (top.id === id) top.collapsed = isCollapsed;
+    (top.children||[]).forEach(function(g){ if (g.id === id) g.collapsed = isCollapsed; });
+  });
+  saveData();
+}
+function setAll(collapsed) {
+  data.forEach(function(top) {
+    top.collapsed = collapsed;
+    (top.children||[]).forEach(function(g){ g.collapsed = collapsed; });
+  });
+  saveData(); render();
+}
+
+// ============ \u7f16\u8f91\u6a21\u5f0f ============
+function toggleEdit() {
+  editing = !editing;
+  document.body.classList.toggle('editing', editing);
+  document.getElementById('edit-toolbar').style.display = editing ? 'flex' : 'none';
+  document.getElementById('edit-toggle-btn').textContent = editing ? '\u9000\u51fa\u7f16\u8f91' : '\u7f16\u8f91\u6a21\u5f0f';
+  document.getElementById('edit-toggle-btn').className = editing ? 'primary' : '';
+  localStorage.setItem(EDIT_KEY, editing ? 'yes' : 'no');
+  render();
+}
+
+function addTopNode() {
+  var colors = ['c-purple','c-teal','c-pink','c-amber','c-green'];
+  var color = colors[data.length % colors.length];
+  data.push({
+    id: uid(), color: color, title: '\u65b0\u6a21\u5757', sub: '',
+    children: [{ id: uid(), title: '\u65b0\u5206\u7ec4', leaves: [{id: uid(), text:'\u65b0\u6761\u76ee'}] }]
+  });
+  saveData(); render();
+}
+
+function resetData() {
+  if (!confirm('\u786e\u5b9a\u8981\u6062\u590d\u5230\u521d\u59cb\u5185\u5bb9\u5417\uff1f\u8fd9\u4f1a\u6e05\u9664\u4f60\u5728\u672c\u673a\u505a\u7684\u6240\u6709\u4fee\u6539\u3002')) return;
+  data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  saveData(); render();
+}
+
+// ============ \u5bfc\u51fa ============
+function exportData() {
+  document.getElementById('export-modal').classList.add('show');
+}
+function closeExportModal() {
+  document.getElementById('export-modal').classList.remove('show');
+}
+function downloadHtml() {
+  var html = document.documentElement.outerHTML;
+  var dataStr = JSON.stringify(data, null, 2);
+  var newHtml = '<!DOCTYPE html>\n' + html.replace(
+    /var DEFAULT_DATA = [\s\S]*?\];(\s*\n)/,
+    'var DEFAULT_DATA = ' + dataStr + ';$1'
+  );
+  var blob = new Blob([newHtml], {type: 'text/html;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  closeExportModal();
+}
+
+// ============ \u5bc6\u7801\u9501 ============
+function checkPw() {
+  var input = document.getElementById('pw-input').value;
+  if (input === 'japan') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    sessionStorage.setItem('mindmap-unlocked', 'yes');
+    init();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+
+function init() {
+  if (localStorage.getItem(EDIT_KEY) === 'yes') {
+    editing = true;
+    document.body.classList.add('editing');
+    document.getElementById('edit-toolbar').style.display = 'flex';
+    document.getElementById('edit-toggle-btn').textContent = '\u9000\u51fa\u7f16\u8f91';
+    document.getElementById('edit-toggle-btn').className = 'primary';
+  }
+  render();
+}
+
+if (sessionStorage.getItem('mindmap-unlocked') === 'yes') {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+  init();
+}
 </script>
 </body>
 </html>
